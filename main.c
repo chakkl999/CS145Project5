@@ -18,6 +18,7 @@
 #define MULTIPLY '*'
 #define SUBTRACT '-'
 #define ADD '+'
+#define DELIMITER ':'
 #define BUFFER_SIZE 16
 #define INTERVAL 500
 
@@ -76,7 +77,7 @@ int toRPN(char infix[], char postfix[], int index)
 			postfix[index2++] = infix[i];
 		else
 		{
-			postfix[index2++] = ':';
+			postfix[index2++] = DELIMITER;
 			if(empty())
 				push(infix[i]);
 			else
@@ -90,7 +91,7 @@ int toRPN(char infix[], char postfix[], int index)
 		}
 	}
 	if(isNumOrDecimal(&postfix[index2-1]))
-		postfix[index2++] = ':';
+		postfix[index2++] = DELIMITER;
 	while(!empty())
 		postfix[index2++] = pop();
 	return index2;
@@ -108,26 +109,26 @@ void calculate(char buffer[], int index)
 		{
 			switch(buffer[i])
 			{
-				case ':':
+				case DELIMITER:
 					push(buffer[i]);
 					pushf(getNum());
 					break;
-				case '*':
+				case MULTIPLY:
 					temp1 = popf();
 					temp2 = popf();
 					pushf(temp2 * temp1);
 					break;
-				case '/':
+				case DIVIDE:
 					temp1 = popf();
 					temp2 = popf();
 					pushf(temp2 / temp1);
 					break;
-				case '+':
+				case ADD:
 					temp1 = popf();
 					temp2 = popf();
 					pushf(temp2 + temp1);
 					break;
-				case '-':
+				case SUBTRACT:
 					temp1 = popf();
 					temp2 = popf();
 					pushf(temp2 - temp1);
@@ -159,10 +160,10 @@ int isNumOrDecimal(const char *c)
 
 int operatorLessThanOrEqual(char c1, char c2)
 {
-	if(c1 == '+' || c1 == '-')
+	if(c1 == ADD || c1 == SUBTRACT)
 		return 1;
 	else
-		if(c2 == '+' || c2 == '-')
+		if(c2 == ADD || c2 == SUBTRACT)
 			return 0;
 		else
 			return 1;
@@ -173,9 +174,9 @@ float getNum()
 	long num = 0, tenth = 1;
 	int digit = 0, decimal = -1;
 	pop();
-	while(peek() != ':' && !empty())
+	while(peek() != DELIMITER && !empty())
 	{
-		if(peek() == '.')
+		if(peek() == DECIMAL)
 		{
 			decimal = digit;
 			pop();
